@@ -34,3 +34,8 @@ htmlcov/
 
 # Project specific
 *.pyc
+
+# Lab2 specific
+lab2/public/uploads/
+*.pid
+gunicorn.log
