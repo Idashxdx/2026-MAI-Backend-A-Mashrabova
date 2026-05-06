@@ -1,12 +1,13 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.models import User
-from .models import Category, Watch, Favorite
+from django.contrib.auth import get_user_model
+from .models import Category, Watch
 
 
 @require_http_methods(["GET"])
 def profile(request):
+    User = get_user_model()
     user = User.objects.first()
 
     if user is None:
@@ -78,6 +79,7 @@ def category(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def add_favorite(request):
+    User = get_user_model()
     user = User.objects.first()
     watch_id = request.POST.get('watch_id')
 
@@ -88,11 +90,7 @@ def add_favorite(request):
         })
 
     watch = Watch.objects.get(id=watch_id)
-
-    Favorite.objects.create(
-        user=user,
-        watch=watch
-    )
+    user.favorites.add(watch)
 
     return JsonResponse({
         "status": "success",

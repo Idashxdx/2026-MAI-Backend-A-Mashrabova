@@ -1,6 +1,6 @@
 # LAB4
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 
 class Category(models.Model):
@@ -13,6 +13,5 @@ class Watch(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
 
-class Favorite(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    watch = models.ForeignKey(Watch, on_delete=models.CASCADE)
+class User(AbstractUser):
+    favorites = models.ManyToManyField(Watch)
