@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,8 @@ SECRET_KEY = 'django-insecure-@e06rcw!dughva76*=mf-l7xn1-+%l(@$n^p@9!ymedkr--4&p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# LAB6
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -74,14 +76,15 @@ WSGI_APPLICATION = 'watchstore.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # LAB4
+# LAB6
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'watch_db',
-        'USER': 'watch_user',
-        'PASSWORD': 'watch_password',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME', 'watch_db'),
+        'USER': os.getenv('DB_USER', 'watch_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'watch_password'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 

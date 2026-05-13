@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16
+    container_name: watchstore_db
+    environment:
+      POSTGRES_DB: watch_db
+      POSTGRES_USER: watch_user
+      POSTGRES_PASSWORD: watch_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U watch_user -d watch_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ..
+      dockerfile: lab3/Dockerfile
+    container_name: watchstore_web
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_NAME: watch_db
+      DB_USER: watch_user
+      DB_PASSWORD: watch_password
+      DB_HOST: db
+      DB_PORT: 5432
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/web/')\""]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:latest
+    container_name: watchstore_nginx
+    depends_on:
+      web:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "service nginx status || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
